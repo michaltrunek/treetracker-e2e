@@ -9,8 +9,8 @@
   },
   "config": {
     "filter": "./tests/*Test.js",
-    "env": "aws-staging",
-    "showscreen": "true",
+    "env": "prod",
+    "showscreen": "false",
     "grep": "@test"
   },
   "pre-commit": [
