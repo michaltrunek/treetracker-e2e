@@ -19,7 +19,7 @@ exports.config = {
     helpers: {
         REST: {
             resetHeaders: true,
-            timeout: 60000
+            timeout: 15000
         },
         Puppeteer: {
             restart: true,
@@ -49,7 +49,8 @@ exports.config = {
         betDetails: './helpers/pages/betDetails.js',
 
         // components
-        couponsComponent: './helpers/components/coupons.js',
+        userPanelComponent: './helpers/components/userPanel.js',
+        noDataComponent: './helpers/components/noData.js'
     },
     multiple: {
         parallel: {

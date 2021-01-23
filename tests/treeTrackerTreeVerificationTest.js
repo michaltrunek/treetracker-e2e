@@ -1,26 +1,26 @@
 Feature('Tree panel (TreeTracker)');
 
-const {I, beforeSteps} = inject();
-let treeTrackerUrl;
+const { I, beforeSteps, userPanelComponent, noDataComponent } = inject();
+let treeTrackerUrl, treeId, incorrectTreeId, treeTrackerIncorrectUrl;
 
 BeforeSuite(( ) => {
-    treeTrackerUrl = 'https://treetracker.org/?treeid=300556'
+    treeId = '300556';
+    incorrectTreeId = '123456456';
+    treeTrackerUrl = `https://treetracker.org/?treeid=${treeId}`;
+    treeTrackerIncorrectUrl = `https://treetracker.org/?treeid=${incorrectTreeId}`;
 });
 
-Before(async () => {
+Scenario('Verify user panel - tree exists and is verified successfully', {retries: 2}, async () => {
     beforeSteps.openPage(treeTrackerUrl);
-});
+    const treeDetails = await userPanelComponent.getTreeDetailsFromApi(treeId);
+    I.assertEquals(treeDetails.responseStatus, 200, 'Response status does not match!');
 
-Scenario('Verify user panel - tree is verified successfully', {retries: 2}, async () => {
-    const response = await I.sendGetRequest('https://treetracker.org/api/web/tree?tree_id=300556');
-    const { id, lat, lon, approved, first_name  } = response.data;
+    userPanelComponent.verifyTreeDetails(treeDetails);
+}).tag('test');
 
-    I.assertEquals(response.status, 200, 'Response status does not match!');
-    I.assertEquals(approved, true, 'Tree is not verified!');
-    I.waitForText(id, 10, '[class*="MuiPaper-root"][class*="elevation8"]');
-    I.waitForText(lat, 10, '[class*="MuiPaper-root"][class*="elevation8"]');
-    I.waitForText(lon, 10, '[class*="MuiPaper-root"][class*="elevation8"]');
-    I.waitForElement('[class="MuiSvgIcon-root"][style="color: rgb(171, 227, 143);"]', 10);
-    I.waitForElement('img[id="tree_img"][src*="treetracker-production-images"]', 10);
-    I.waitForText(first_name, 10, '[class*="MuiPaper-root"][class*="elevation8"]');
+Scenario('Verify user panel - tree does not exist', async () => {
+    beforeSteps.openPage(treeTrackerIncorrectUrl);
+    //const treeDetails = await userPanelComponent.getTreeDetailsFromApi(incorrectTreeId);
+    //I.assertEquals(treeDetails.responseStatus, 404, 'Response status does not match!');
+    noDataComponent.verifyNoDataPopup();
 }).tag('test');
